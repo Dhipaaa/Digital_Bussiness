@@ -6,6 +6,18 @@
         Menyunting Pengaturan Event
     </h2>
 
+    {{-- Error Display --}}
+    @if ($errors->any())
+    <div class="mb-6 p-4 bg-red-50 border border-red-300 rounded-lg">
+        <h3 class="font-bold text-red-800 mb-2">⚠️ Ada Kesalahan:</h3>
+        <ul class="text-red-700 list-disc list-inside">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <form action="{{ route('admin.events.update', $event->id) }}"
         method="POST"
         enctype="multipart/form-data"
@@ -19,32 +31,41 @@
             <label class="block mb-2 font-medium text-gray-700">Judul Event</label>
             <input type="text" name="title"
                 value="{{ old('title', $event->title) }}"
-                class="w-full border border-gray-300 p-2.5 rounded focus:ring focus:ring-blue-200"
+                class="w-full border {{ $errors->has('title') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded focus:ring focus:ring-blue-200"
                 required>
+            @error('title')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Kategori --}}
         <div class="mb-4">
             <label class="block mb-2 font-medium text-gray-700">Kategori Event</label>
             <select name="category_id"
-                    class="w-full border border-gray-300 p-2.5 rounded"
-                    required>
+                class="w-full border {{ $errors->has('category_id') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded"
+                required>
                 @foreach($categories as $category)
-                    <option value="{{ $category->id }}"
-                        {{ old('category_id', $event->category_id) == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
+                <option value="{{ $category->id }}"
+                    {{ old('category_id', $event->category_id) == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
                 @endforeach
             </select>
+            @error('category_id')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Deskripsi --}}
         <div class="mb-4">
             <label class="block mb-2 font-medium text-gray-700">Deskripsi Pendek</label>
             <textarea name="description"
-                    class="w-full border border-gray-300 p-2.5 rounded"
-                    rows="3"
-                    required>{{ old('description', $event->description) }}</textarea>
+                class="w-full border {{ $errors->has('description') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded"
+                rows="3"
+                required>{{ old('description', $event->description) }}</textarea>
+            @error('description')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Grid --}}
@@ -53,24 +74,33 @@
                 <label class="block mb-2 font-medium text-gray-700">Tanggal & Waktu</label>
                 <input type="datetime-local" name="date"
                     value="{{ old('date', $event->date ? $event->date->format('Y-m-d\TH:i') : '') }}"
-                    class="w-full border border-gray-300 p-2.5 rounded"
+                    class="w-full border {{ $errors->has('date') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded"
                     required>
+                @error('date')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label class="block mb-2 font-medium text-gray-700">Harga Tiket (Rp)</label>
                 <input type="number" name="price"
                     value="{{ old('price', $event->price) }}"
-                    class="w-full border border-gray-300 p-2.5 rounded"
+                    class="w-full border {{ $errors->has('price') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded"
                     required>
+                @error('price')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label class="block mb-2 font-medium text-gray-700">Kapasitas Stok</label>
                 <input type="number" name="stock"
                     value="{{ old('stock', $event->stock) }}"
-                    class="w-full border border-gray-300 p-2.5 rounded"
+                    class="w-full border {{ $errors->has('stock') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded"
                     required>
+                @error('stock')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -79,21 +109,27 @@
             <label class="block mb-2 font-medium text-gray-700">Lokasi / Gedung</label>
             <input type="text" name="location"
                 value="{{ old('location', $event->location) }}"
-                class="w-full border border-gray-300 p-2.5 rounded"
+                class="w-full border {{ $errors->has('location') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded"
                 required>
+            @error('location')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Poster --}}
         <div class="mb-6">
-            <label class="block mb-2 font-medium text-gray-700">Poster Event</label>
-            <input type="file" name="poster_path"
-                class="w-full border border-gray-300 p-2.5 rounded">
+            <label class="block mb-2 font-medium text-gray-700">Poster Event (Opsional)</label>
+            <input type="file" name="poster" accept="image/*"
+                class="w-full border {{ $errors->has('poster') ? 'border-red-500 bg-red-50' : 'border-gray-300' }} p-2.5 rounded">
+            @error('poster')
+            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Submit --}}
         <div class="flex justify-end border-t pt-4">
             <button type="submit"
-                    class="bg-blue-600 text-white px-8 py-2.5 rounded font-semibold hover:bg-blue-700 shadow-md">
+                class="bg-blue-600 text-white px-8 py-2.5 rounded font-semibold hover:bg-blue-700 shadow-md">
                 Simpan Perubahan
             </button>
         </div>

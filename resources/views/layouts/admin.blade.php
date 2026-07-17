@@ -28,7 +28,7 @@
 
         <nav class="flex-1 space-y-2">
             <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-4 px-2">Main Menu</p>
-            <a href="admin-dashboard"
+            <a href="{{ route('admin.dashboard') }}"
                 class="flex items-center gap-3 px-4 py-3 bg-indigo-800 text-white rounded-xl font-bold transition">
                 <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -37,7 +37,7 @@
                 </svg>
                 Dashboard
             </a>
-            <a href="admin-events"
+            <a href="{{ route('admin.events.index') }}"
                 class="flex items-center gap-3 px-4 py-3 hover:bg-indigo-800 rounded-xl font-bold transition">
                 <svg class="w-5 h-5 text-indigo-400 group-hover:text-indigo-300" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
                 </svg>
                 Kelola Event
             </a>
-            <a href="admin-transactions"
+            <a href="{{ route('admin.transactions.index') }}"
                 class="flex items-center gap-3 px-4 py-3 hover:bg-indigo-800 rounded-xl font-bold transition">
                 <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -56,22 +56,24 @@
                 </svg>
                 Laporan Transaksi
             </a>
-            <a href="admin-categories"
+            <a href="{{ route('admin.categories.index') }}"
                 class="flex items-center gap-3 px-4 py-3 hover:bg-indigo-800 rounded-xl font-bold transition">
                 Kategori
             </a>
         </nav>
 
         <div class="pt-6 border-t border-indigo-800">
-            <a href="index.html"
-                class="flex items-center gap-3 px-4 py-3 text-indigo-300 hover:text-white transition font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                    </path>
-                </svg>
-                Keluar
-            </a>
+            <form method="POST" action="{{ route('admin.logout') }}" class="flex items-center gap-3 px-4 py-3 text-indigo-300 hover:text-white transition font-medium">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 text-left w-full">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                        </path>
+                    </svg>
+                    Keluar
+                </button>
+            </form>
         </div>
     </aside>
 
@@ -95,8 +97,8 @@
             </div>
         </header>
 
-@yield('content')
-         
+        @yield('content')
+
     </main>
 
 </body>
