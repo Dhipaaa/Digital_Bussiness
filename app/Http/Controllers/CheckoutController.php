@@ -7,6 +7,8 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EventTicketMail;
 
 class CheckoutController extends Controller
 {
@@ -119,7 +121,25 @@ class CheckoutController extends Controller
             $transactionStatus = is_object($midtransStatus) ? ($midtransStatus->transaction_status ?? null) : null;
 
             if (in_array($transactionStatus, ['capture', 'settlement'], true)) {
-                $transaction->update(['status' => 'success']);
+                // Hanya lakukan pembaruan lokal jika status saat ini masih pending
+                if (strtolower($transaction->status) === 'pending') {
+                    $transaction->update(['status' => 'success']);
+
+                    // Kurangi stock jika tersedia
+                    if ($transaction->event && $transaction->event->stock > 0) {
+                        $transaction->event->stock = max(0, $transaction->event->stock - 1);
+                        $transaction->event->save();
+                    } else {
+                        Log::warning('Stock habis setelah pembayaran berhasil (fallback). Order: ' . $transaction->order_id);
+                    }
+
+                    // Kirim email E-Ticket secara manual (fallback)
+                    try {
+                        Mail::to($transaction->customer_email)->send(new EventTicketMail($transaction));
+                    } catch (\Exception $e) {
+                        Log::error('Gagal mengirim email ETicket secara manual (Bypass): ' . $e->getMessage());
+                    }
+                }
             }
         } catch (\Exception $e) {
             Log::error('Midtrans status check failed', ['order_id' => $order_id, 'error' => $e->getMessage()]);
